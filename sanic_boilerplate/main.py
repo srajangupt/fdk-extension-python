@@ -5,8 +5,8 @@ from sanic_boilerplate.handlers import setup_routes
 from sanic_boilerplate.session.session import Session
 from sanic_boilerplate.session.session_storage import SessionStorage
 
-from fdk_client_python.sdk.application.ApplicationConfig import ApplicationConfig
-from fdk_client_python.sdk.application.ApplicationClient import ApplicationClient
+from fdk_client.sdk.application.ApplicationConfig import ApplicationConfig
+from fdk_client.sdk.application.ApplicationClient import ApplicationClient
 
 
 async def get_platform_client(company_id):

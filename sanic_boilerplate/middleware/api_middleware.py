@@ -1,7 +1,7 @@
 import json
 
-from fdk_client_python.sdk.application.ApplicationClient import ApplicationClient
-from fdk_client_python.sdk.application.ApplicationConfig import ApplicationConfig
+from fdk_client.sdk.application.ApplicationClient import ApplicationClient
+from fdk_client.sdk.application.ApplicationConfig import ApplicationConfig
 from sanic.response import json as json_response
 
 from sanic_boilerplate.constants import SESSION_COOKIE_NAME

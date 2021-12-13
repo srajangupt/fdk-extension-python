@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Dict
 from urllib.parse import urljoin
 
-from fdk_client_python.sdk.platform.PlatformClient import PlatformClient
-from fdk_client_python.sdk.platform.PlatformConfig import PlatformConfig
+from fdk_client.sdk.platform.PlatformClient import PlatformClient
+from fdk_client.sdk.platform.PlatformConfig import PlatformConfig
 
 from sanic_boilerplate.constants import FYND_CLUSTER
 from sanic_boilerplate.constants import OFFLINE_ACCESS_MODE
