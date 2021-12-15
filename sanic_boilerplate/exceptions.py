@@ -28,3 +28,11 @@ class FdkInvalidOAuthError(Exception):
     def __init__(self, message="Failed as oauth was invalid."):
         """Initialize function __init__."""
         super(FdkInvalidOAuthError, self).__init__(message)
+
+
+class FdkInvalidWebhookConfig(Exception):
+    """Class FdkInvalidWebhookConfig."""
+
+    def __init__(self, message="Failed as webhook config was invalid."):
+        """Initialize function __init__."""
+        super(FdkInvalidWebhookConfig, self).__init__(message)
