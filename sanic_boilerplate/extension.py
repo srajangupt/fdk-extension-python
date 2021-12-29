@@ -1,17 +1,21 @@
-# import fdk-client - python
+"""Extension class file."""
 from datetime import datetime
 from typing import Dict
 from urllib.parse import urljoin
 
-from fdk_client.sdk.platform.PlatformClient import PlatformClient
-from fdk_client.sdk.platform.PlatformConfig import PlatformConfig
+from fdk_client.platform.PlatformClient import PlatformClient
+from fdk_client.platform.PlatformConfig import PlatformConfig
 
 from sanic_boilerplate.constants import FYND_CLUSTER
 from sanic_boilerplate.constants import OFFLINE_ACCESS_MODE
 from sanic_boilerplate.constants import ONLINE_ACCESS_MODE
 from sanic_boilerplate.exceptions import FdkInvalidExtensionJson
 from sanic_boilerplate.session.session import Session
+from sanic_boilerplate.utilities.logger import get_logger
 from sanic_boilerplate.utilities.utility import is_valid_url
+from sanic_boilerplate.webhook import WebhookRegistry
+
+logger = get_logger()
 
 
 class Extension:
@@ -24,6 +28,7 @@ class Extension:
         self.access_mode = None
         self.scopes = None
         self.cluster = FYND_CLUSTER
+        self.webhook_registry = None
 
     def initialize(self, data: Dict):
         self.storage = data["storage"]
@@ -54,6 +59,12 @@ class Extension:
                 raise FdkInvalidExtensionJson("Invalid cluster")
             self.cluster = data["cluster"]
 
+        logger.debug("Extension initialized")
+        self.webhook_registry = WebhookRegistry()
+
+        if data.get("webhook_config"):
+            self.webhook_registry.initialize(data["webhook_config"], data)
+
     @staticmethod
     def verify_scopes(scopes):
         if not scopes:
@@ -83,8 +94,9 @@ class Extension:
         if session.access_token_validity:
             ac_nr_expired = (session.access_token_validity - datetime.now()).total_seconds() <= 120
             if ac_nr_expired:
+                logger.debug(f"Renewing access token for company {company_id}")
                 res = await platform_config.oauthClient.renewAccessToken()
-
+                logger.debug(f"Access token renewed for company {company_id}")
         return PlatformClient(platform_config)
 
 
@@ -97,6 +109,7 @@ class FdkExtensionClient:
         self.application_proxy_routes_bp = client_data["application_proxy_routes_bp"]
         self.get_platform_client = client_data["get_platform_client"]
         self.get_application_client = client_data["get_application_client"]
+        self.webhook_registry = client_data["webhook_registry"]
 
 
 extension = Extension()

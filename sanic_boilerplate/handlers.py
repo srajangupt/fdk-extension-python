@@ -1,3 +1,4 @@
+"""Request handlers."""
 import datetime
 import uuid
 
@@ -13,6 +14,9 @@ from sanic_boilerplate.extension import extension
 from sanic_boilerplate.middleware.api_middleware import session_middleware
 from sanic_boilerplate.session.session import Session
 from sanic_boilerplate.session.session_storage import SessionStorage
+from sanic_boilerplate.utilities import logger
+
+logger = logger.get_logger()
 
 
 async def install_handler(request):
@@ -64,9 +68,12 @@ async def install_handler(request):
             "access_mode": extension.access_mode
         })
 
+        logger.debug(f"Redirecting after install callback to url: {redirect_url}")
+
         next_response = redirect(redirect_url, headers={"x-company-id": str(company_id)})
         next_response.cookies[company_cookie_name] = session.session_id
         next_response.cookies[company_cookie_name]["domain"] = "0.0.0.0"
+        # TODO : uncomment for production app
         # next_response.cookies[company_cookie_name]["secure"] = True
         # next_response.cookies[company_cookie_name]["samesite"] = "None"
         next_response.cookies[company_cookie_name]["httponly"] = False
@@ -106,19 +113,26 @@ async def auth_handler(request):
         request.conn_info.ctx.fdk_session.refresh_token = token.get("refresh_token")
         await SessionStorage.save_session(request.conn_info.ctx.fdk_session)
         request.conn_info.ctx.extension = extension
+
         redirect_url = await extension.callbacks["auth"](request)
+
+        if extension.webhook_registry.is_initialized():
+            client = await extension.get_platform_client(request.conn_info.ctx.fdk_session.company_id,
+                                                         request.conn_info.ctx.fdk_session)
+            await extension.webhook_registry.sync_events(client)
 
         company_cookie_name = "{}_{}".format(SESSION_COOKIE_NAME, request.conn_info.ctx.fdk_session.company_id)
 
         next_response = redirect(redirect_url, headers={"x-company-id": request.conn_info.ctx.fdk_session.company_id})
         next_response.cookies[company_cookie_name] = request.conn_info.ctx.fdk_session.session_id
-        # next_response.cookies[company_cookie_name]["secure"] = True
         next_response.cookies[company_cookie_name]["httponly"] = True
         next_response.cookies[company_cookie_name]["expires"] = session_expires
+        # TODO : uncomment for production app
         # next_response.cookies[company_cookie_name]["samesite"] = "None"
+        # next_response.cookies[company_cookie_name]["secure"] = True
+        logger.debug(f"Redirecting after auth callback to url: {redirect_url}")
         return next_response
     except Exception as e:
-        print(e)
         return json_response({"error_message": str(e)}, 500)
 
 

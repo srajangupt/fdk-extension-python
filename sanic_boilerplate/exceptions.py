@@ -1,3 +1,6 @@
+"""Exception classes."""
+
+
 class FdkInvalidExtensionJson(Exception):
     """Class FdkInvalidExtensionJson."""
 
@@ -36,3 +39,35 @@ class FdkInvalidWebhookConfig(Exception):
     def __init__(self, message="Failed as webhook config was invalid."):
         """Initialize function __init__."""
         super(FdkInvalidWebhookConfig, self).__init__(message)
+
+
+class FdkWebhookRegistrationError(Exception):
+    """Class FdkWebhookRegistrationError."""
+
+    def __init__(self, message="Failed to sync webhook events."):
+        """Initialize function __init__."""
+        super(FdkWebhookRegistrationError, self).__init__(message)
+
+
+class FdkInvalidHMacError(Exception):
+    """Class FdkInvalidHMacError."""
+
+    def __init__(self, message="Failed to validate signature."):
+        """Initialize function __init__."""
+        super(FdkInvalidHMacError, self).__init__(message)
+
+
+class FdkWebhookHandlerNotFound(Exception):
+    """Class FdkWebhookHandlerNotFound."""
+
+    def __init__(self, message="Failed to find fdk webhook handler."):
+        """Initialize function __init__."""
+        super(FdkWebhookHandlerNotFound, self).__init__(message)
+
+
+class FdkWebhookProcessError(Exception):
+    """Class FdkWebhookProcessError."""
+
+    def __init__(self, message="Failed to process webhook."):
+        """Initialize function __init__."""
+        super(FdkWebhookProcessError, self).__init__(message)
