@@ -1,12 +1,13 @@
+"""Setup fdk file."""
+from fdk_client.application.ApplicationClient import ApplicationClient
+from fdk_client.application.ApplicationConfig import ApplicationConfig
+
 from sanic_boilerplate.api_blueprints import setup_proxy_routes_blueprint
 from sanic_boilerplate.extension import FdkExtensionClient
 from sanic_boilerplate.extension import extension
 from sanic_boilerplate.handlers import setup_routes
 from sanic_boilerplate.session.session import Session
 from sanic_boilerplate.session.session_storage import SessionStorage
-
-from fdk_client.sdk.application.ApplicationConfig import ApplicationConfig
-from fdk_client.sdk.application.ApplicationClient import ApplicationClient
 
 
 async def get_platform_client(company_id):
@@ -42,6 +43,7 @@ def setup_fdk(data):
         "fdk_blueprint": fdk_route,
         "extension": extension,
         "platform_api_routes_bp": platform_api_routes_bp,
+        "webhook_registry": extension.webhook_registry,
         "application_proxy_routes_bp": application_proxy_routes_bp,
         "get_platform_client": get_platform_client,
         "get_application_client": get_platform_client
