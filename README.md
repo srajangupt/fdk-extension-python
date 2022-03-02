@@ -32,7 +32,7 @@ fdk_extension_client = setup_fdk({
     "callbacks": extension_handler,
     "storage": redis_connection,
     "access_mode": "offline",
-    "cluster": "https://api.fyndx1.de"  # this is optional by default it points to prod.
+    "cluster": "https://api.fyndx1.de",  # this is optional by default it points to prod.
 })
 
 app.blueprint(fdk_extension_client.fdk_blueprint)
@@ -84,3 +84,60 @@ async def background_handler(request):
     except Exception as e:
         return response.json({"error_message": str(e)}, 500)
 ```
+
+
+#### How to register for webhook events?
+
+Webhook events can be helpful to handle tasks when certan events occur on platform. You can subscribe to such events by passing webhook_config in setupFdk function.
+
+```python
+fdk_extension_client = setup_fdk({
+    "api_key": "<API_KEY>",
+    "api_secret": "<API_SECRET>",
+    "base_url": base_url,
+    "scopes": ["company"],
+    "callbacks": extension_handler,
+    "storage": redis_connection,
+    "access_mode": "offline",
+    "cluster": "https://api.fyndx1.de",  # this is optional by default it points to prod.
+    "webhook_config": {
+    "api_path": "/api/v1/webhooks", # required
+    "notification_email": "test@abc.com", # required
+    "subscribe_on_install": False, # optional. Default true
+    "subscribed_saleschannel": "specific", #optional. Default all
+    "event_map": {  # required
+      'brand/create': {
+        "version": '1',
+        "handler": handleBrandCreate
+      },
+      'extension/uninstall': {
+        "version": '1',
+        "handler": handleLocationUpdate
+      },
+      'application/coupon/create': {
+        "version": '1',
+        "handler": handleCouponCreate
+      }
+    }
+  }
+})
+```
+> By default all webhook events all subscribed for all companies whenever they are installed. To disable this behavior set `subscribe_on_install` to `false`. If `subscribe_on_install` is set to false, you need to manually enable webhook event subscription by calling `syncEvents` method of `webhookRegistry`
+
+There should be view on given api path to receive webhook call. It should be `POST` api path. Api view should call `processWebhook` method of `webhookRegistry` object available under `fdkClient` here.
+
+> Here `processWebhook` will do payload validation with signature and calls individual handlers for event passed with webhook config. 
+
+```python
+
+```
+
+> Setting `subscribed_saleschannel` as "specific" means, you will have to manually subscribe saleschannel level event for individual saleschannel. Default value here is "all" and event will be subscribed for all sales channels. For enabling events manually use function `enableSalesChannelWebhook`. To disable receiving events for a saleschannel use function `disableSalesChannelWebhook`. 
+
+
+##### How webhook registery subscribes to webhooks on Fynd Platform?
+After webhook config is passed to setupFdk whenever extension is launched to any of companies where extension is installed or to be installed, webhook config data is used to create webhook subscriber on Fynd Platform for that company. 
+
+> Any update to webhook config will not automatically update subscriber data on Fynd Platform for a company until extension is opened atleast once after the update. 
+
+Other way to update webhook config manually for a company is to call `syncEvents` function of webhookRegistery.   
