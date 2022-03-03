@@ -11,7 +11,8 @@ SESSION_EXPIRY_IN_SECONDS = 900
 
 ASSOCIATION_CRITERIA = {
     "ALL": "ALL",
-    "SPECIFIC": "SPECIFIC-EVENTS"
+    "SPECIFIC": "SPECIFIC-EVENTS",  # to be set when saleschannel specific events are subscribed & sales channel present
+    "EMPTY": "EMPTY"  # to be set when saleschannel specific events are subscribed but not sales channel present
 }
 
 TEST_WEBHOOK_EVENT_NAME = "ping"

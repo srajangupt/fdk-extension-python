@@ -48,7 +48,6 @@ async def install_handler(request):
 
         request.conn_info.ctx.fdk_session = session
         request.conn_info.ctx.extension = extension
-        request.conn_info.ctx.foo = 1
 
         company_cookie_name = "{}_{}".format(SESSION_COOKIE_NAME, company_id)
 
@@ -83,7 +82,7 @@ async def install_handler(request):
 
         return next_response
     except Exception as e:
-        print(e)
+        logger.exception(e)
         return json_response({"error_message": str(e)}, 500)
 
 
@@ -119,7 +118,7 @@ async def auth_handler(request):
         if extension.webhook_registry.is_initialized():
             client = await extension.get_platform_client(request.conn_info.ctx.fdk_session.company_id,
                                                          request.conn_info.ctx.fdk_session)
-            await extension.webhook_registry.sync_events(client)
+            await extension.webhook_registry.sync_events(client, None, True)
 
         company_cookie_name = "{}_{}".format(SESSION_COOKIE_NAME, request.conn_info.ctx.fdk_session.company_id)
 
@@ -133,6 +132,7 @@ async def auth_handler(request):
         logger.debug(f"Redirecting after auth callback to url: {redirect_url}")
         return next_response
     except Exception as e:
+        logger.exception(e)
         return json_response({"error_message": str(e)}, 500)
 
 
@@ -151,6 +151,7 @@ async def uninstall_handler(request):
         await extension.callbacks["uninstall"](request)
         return json_response({"success": True})
     except Exception as e:
+        logger.exception(e)
         return json_response({"error_message": str(e)}, 500)
 
 
