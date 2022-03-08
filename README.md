@@ -106,11 +106,11 @@ fdk_extension_client = setup_fdk({
     "subscribe_on_install": False, # optional. Default true
     "subscribed_saleschannel": "specific", #optional. Default all
     "event_map": {  # required
-      'brand/create': {
+      'company/brand/create': {
         "version": '1',
         "handler": handleBrandCreate
       },
-      'extension/uninstall': {
+      'company/location/update': {
         "version": '1',
         "handler": handleLocationUpdate
       },
@@ -129,7 +129,15 @@ There should be view on given api path to receive webhook call. It should be `PO
 > Here `processWebhook` will do payload validation with signature and calls individual handlers for event passed with webhook config. 
 
 ```python
+async def webhook_handler(request):
+    try:
+        await fdk_extension_client.webhook_registry.process_webhook(request)
+        return response.json({"success": True})
+    except Exception as e:
+        logger.exception(e)
+        return response.json({"error_message": str(e), "success": False}, 500)
 
+app.add_route(webhook_handler, "/webhook", methods=["POST"])
 ```
 
 > Setting `subscribed_saleschannel` as "specific" means, you will have to manually subscribe saleschannel level event for individual saleschannel. Default value here is "all" and event will be subscribed for all sales channels. For enabling events manually use function `enableSalesChannelWebhook`. To disable receiving events for a saleschannel use function `disableSalesChannelWebhook`. 
