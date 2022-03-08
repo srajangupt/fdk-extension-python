@@ -101,20 +101,32 @@ async def test_route_handler(request):
 
 
 async def webhook_handler(request):
-    await fdk_extension_client.webhook_registry.process_webhook(request)
-    return response.json({"success": True})
+    try:
+        await fdk_extension_client.webhook_registry.process_webhook(request)
+        return response.json({"success": True})
+    except Exception as e:
+        logger.exception(e)
+        return response.json({"error_message": str(e), "success": False}, 500)
 
 
 async def enable_sales_channel_webhook_handler(request, application_id):
-    await fdk_extension_client.webhook_registry.enable_sales_channel_webhook(request.conn_info.ctx.platform_client,
-                                                                             application_id)
-    return response.json({"success": True})
+    try:
+        await fdk_extension_client.webhook_registry.enable_sales_channel_webhook(request.conn_info.ctx.platform_client,
+                                                                                 application_id)
+        return response.json({"success": True})
+    except Exception as e:
+        logger.exception(e)
+        return response.json({"error_message": str(e), "success": False}, 500)
 
 
 async def disable_sales_channel_webhook_handler(request, application_id):
-    await fdk_extension_client.webhook_registry.disable_sales_channel_webhook(request.conn_info.ctx.platform_client,
-                                                                              application_id)
-    return response.json({"success": True})
+    try:
+        await fdk_extension_client.webhook_registry.disable_sales_channel_webhook(request.conn_info.ctx.platform_client,
+                                                                                  application_id)
+        return response.json({"success": True})
+    except Exception as e:
+        logger.exception(e)
+        return response.json({"error_message": str(e), "success": False}, 500)
 
 
 app.blueprint(fdk_extension_client.fdk_blueprint)
