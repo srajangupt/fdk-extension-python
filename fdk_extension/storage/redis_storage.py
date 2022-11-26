@@ -1,4 +1,4 @@
-from fdk-extension.storage.base_storage import BaseStorage
+from fdk_extension.storage.base_storage import BaseStorage
 
 
 class RedisStorage(BaseStorage):

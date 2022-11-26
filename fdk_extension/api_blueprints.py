@@ -1,8 +1,8 @@
 from sanic import Blueprint
 
-from fdk-extension.middleware.api_middleware import application_proxy_on_request
-from fdk-extension.middleware.api_middleware import platform_api_on_request
-from fdk-extension.middleware.api_middleware import session_middleware
+from fdk_extension.middleware.api_middleware import application_proxy_on_request
+from fdk_extension.middleware.api_middleware import platform_api_on_request
+from fdk_extension.middleware.api_middleware import session_middleware
 
 
 def setup_proxy_routes_blueprint():

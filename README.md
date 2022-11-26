@@ -15,7 +15,7 @@ from sanic import response
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 print(sys.path)
 
-from fdk-extension import setup_fdk
+from fdk_extension import setup_fdk
 from examples.extension_handlers import extension_handler
 
 app = Sanic("test")

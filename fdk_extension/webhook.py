@@ -5,14 +5,14 @@ import re
 
 import ujson
 
-from fdk-extension.constants import ASSOCIATION_CRITERIA
-from fdk-extension.constants import TEST_WEBHOOK_EVENT_NAME
-from fdk-extension.exceptions import FdkInvalidHMacError
-from fdk-extension.exceptions import FdkInvalidWebhookConfig
-from fdk-extension.exceptions import FdkWebhookHandlerNotFound
-from fdk-extension.exceptions import FdkWebhookProcessError
-from fdk-extension.exceptions import FdkWebhookRegistrationError
-from fdk-extension.utilities.logger import get_logger
+from fdk_extension.constants import ASSOCIATION_CRITERIA
+from fdk_extension.constants import TEST_WEBHOOK_EVENT_NAME
+from fdk_extension.exceptions import FdkInvalidHMacError
+from fdk_extension.exceptions import FdkInvalidWebhookConfig
+from fdk_extension.exceptions import FdkWebhookHandlerNotFound
+from fdk_extension.exceptions import FdkWebhookProcessError
+from fdk_extension.exceptions import FdkWebhookRegistrationError
+from fdk_extension.utilities.logger import get_logger
 
 logger = get_logger()
 

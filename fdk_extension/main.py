@@ -2,12 +2,12 @@
 from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.application.ApplicationConfig import ApplicationConfig
 
-from fdk-extension.api_blueprints import setup_proxy_routes_blueprint
-from fdk-extension.extension import FdkExtensionClient
-from fdk-extension.extension import extension
-from fdk-extension.handlers import setup_routes
-from fdk-extension.session.session import Session
-from fdk-extension.session.session_storage import SessionStorage
+from fdk_extension.api_blueprints import setup_proxy_routes_blueprint
+from fdk_extension.extension import FdkExtensionClient
+from fdk_extension.extension import extension
+from fdk_extension.handlers import setup_routes
+from fdk_extension.session.session import Session
+from fdk_extension.session.session_storage import SessionStorage
 
 
 async def get_platform_client(company_id):
