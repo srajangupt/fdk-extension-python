@@ -6,15 +6,15 @@ from sanic.blueprints import Blueprint
 from sanic.response import json as json_response
 from sanic.response import redirect
 
-from sanic_boilerplate.constants import SESSION_COOKIE_NAME
-from sanic_boilerplate.constants import SESSION_EXPIRY_IN_SECONDS
-from sanic_boilerplate.exceptions import FdkInvalidOAuthError
-from sanic_boilerplate.exceptions import FdkSessionNotFoundError
-from sanic_boilerplate.extension import extension
-from sanic_boilerplate.middleware.api_middleware import session_middleware
-from sanic_boilerplate.session.session import Session
-from sanic_boilerplate.session.session_storage import SessionStorage
-from sanic_boilerplate.utilities import logger
+from fdk-extension.constants import SESSION_COOKIE_NAME
+from fdk-extension.constants import SESSION_EXPIRY_IN_SECONDS
+from fdk-extension.exceptions import FdkInvalidOAuthError
+from fdk-extension.exceptions import FdkSessionNotFoundError
+from fdk-extension.extension import extension
+from fdk-extension.middleware.api_middleware import session_middleware
+from fdk-extension.session.session import Session
+from fdk-extension.session.session_storage import SessionStorage
+from fdk-extension.utilities import logger
 
 logger = logger.get_logger()
 

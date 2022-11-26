@@ -1,7 +1,7 @@
 """Utility functions."""
 import re
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
+import time
 from typing import Text
 
 
@@ -31,3 +31,5 @@ def json_serial(obj):
 def isoformat_to_datetime(isoformat_string):
     return datetime.strptime(isoformat_string, "%Y-%m-%dT%H:%M:%S.%f")
 
+def get_current_timestamp():
+    return time.time_ns() // 1_000_000

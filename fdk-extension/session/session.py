@@ -2,9 +2,9 @@ import hashlib
 import json
 import uuid
 
-from sanic_boilerplate.constants import ONLINE_ACCESS_MODE
-from sanic_boilerplate.utilities.utility import isoformat_to_datetime
-from sanic_boilerplate.utilities.utility import json_serial
+from fdk-extension.constants import ONLINE_ACCESS_MODE
+from fdk-extension.utilities.utility import isoformat_to_datetime
+from fdk-extension.utilities.utility import json_serial
 
 
 class Session:
@@ -32,6 +32,14 @@ class Session:
                     session[key] = isoformat_to_datetime(session[key])
             setattr(session_object, key, session[key])
         return session_object
+
+    def update_token(self, raw_token):
+        self.access_mode = raw_token.access_mode
+        self.access_token = raw_token.access_token
+        self.current_user = raw_token.current_user
+        self.refresh_token = raw_token.refresh_token
+        self.expires_in = raw_token.expires_in
+        self.access_token_validity = raw_token.access_token_validity
 
     def to_json(self):
         return json.dumps(self.__dict__, default=json_serial,

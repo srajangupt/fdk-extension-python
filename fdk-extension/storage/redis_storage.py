@@ -1,4 +1,4 @@
-from sanic_boilerplate.storage.base_storage import BaseStorage
+from fdk-extension.storage.base_storage import BaseStorage
 
 
 class RedisStorage(BaseStorage):

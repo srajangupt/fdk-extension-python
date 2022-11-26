@@ -1,7 +1,7 @@
-from sanic_boilerplate.session.session import Session
+from fdk-extension.session import Session
 from datetime import datetime
 
-from sanic_boilerplate.extension import extension
+from fdk-extension.extension import extension
 from typing import Text, Dict
 import json
 

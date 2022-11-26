@@ -4,9 +4,9 @@ from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.application.ApplicationConfig import ApplicationConfig
 from sanic.response import json as json_response
 
-from sanic_boilerplate.constants import SESSION_COOKIE_NAME
-from sanic_boilerplate.extension import extension
-from sanic_boilerplate.session.session_storage import SessionStorage
+from fdk-extension.constants import SESSION_COOKIE_NAME
+from fdk-extension.extension import extension
+from fdk-extension.session.session_storage import SessionStorage
 
 
 async def session_middleware(request):

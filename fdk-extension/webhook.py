@@ -5,14 +5,14 @@ import re
 
 import ujson
 
-from sanic_boilerplate.constants import ASSOCIATION_CRITERIA
-from sanic_boilerplate.constants import TEST_WEBHOOK_EVENT_NAME
-from sanic_boilerplate.exceptions import FdkInvalidHMacError
-from sanic_boilerplate.exceptions import FdkInvalidWebhookConfig
-from sanic_boilerplate.exceptions import FdkWebhookHandlerNotFound
-from sanic_boilerplate.exceptions import FdkWebhookProcessError
-from sanic_boilerplate.exceptions import FdkWebhookRegistrationError
-from sanic_boilerplate.utilities.logger import get_logger
+from fdk-extension.constants import ASSOCIATION_CRITERIA
+from fdk-extension.constants import TEST_WEBHOOK_EVENT_NAME
+from fdk-extension.exceptions import FdkInvalidHMacError
+from fdk-extension.exceptions import FdkInvalidWebhookConfig
+from fdk-extension.exceptions import FdkWebhookHandlerNotFound
+from fdk-extension.exceptions import FdkWebhookProcessError
+from fdk-extension.exceptions import FdkWebhookRegistrationError
+from fdk-extension.utilities.logger import get_logger
 
 logger = get_logger()
 
