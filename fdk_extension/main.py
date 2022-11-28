@@ -40,7 +40,7 @@ def setup_fdk(data):
     platform_api_routes_bp, application_proxy_routes_bp = setup_proxy_routes_blueprint()
 
     return FdkExtensionClient(**{
-        "fdk_blueprint": fdk_route,
+        "fdk_handler": fdk_route,
         "extension": extension,
         "platform_api_routes_bp": platform_api_routes_bp,
         "webhook_registry": extension.webhook_registry,

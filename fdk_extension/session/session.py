@@ -33,13 +33,13 @@ class Session:
             setattr(session_object, key, session[key])
         return session_object
 
-    def update_token(self, raw_token):
-        self.access_mode = raw_token.access_mode
-        self.access_token = raw_token.access_token
-        self.current_user = raw_token.current_user
-        self.refresh_token = raw_token.refresh_token
-        self.expires_in = raw_token.expires_in
-        self.access_token_validity = raw_token.access_token_validity
+    def update_token(self, raw_token: dict):
+        self.access_mode = raw_token.get("access_mode")
+        self.access_token = raw_token.get("access_token")
+        self.current_user = raw_token.get("current_user")
+        self.refresh_token = raw_token.get("refresh_token")
+        self.expires_in = raw_token.get("expires_in")
+        self.access_token_validity = raw_token.get("access_token_validity")
 
     def to_json(self):
         return json.dumps(self.__dict__, default=json_serial,

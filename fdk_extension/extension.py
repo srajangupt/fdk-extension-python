@@ -131,7 +131,7 @@ class Extension:
             if ac_nr_expired:
                 logger.debug(f"Renewing access token for company {company_id} with platform config {json.dumps(platform_config)}") # TODO: Safe stringfy json object
                 renew_token_res = await platform_config.oauthClient.renewAccessToken(session.access_mode == OFFLINE_ACCESS_MODE)
-                renew_token_res.access_token_validity = platform_config.oauthClient.token_expires_at
+                renew_token_res["access_token_validity"] = platform_config.oauthClient.token_expires_at
                 session.update_token(renew_token_res)
                 await SessionStorage.save_session(session)
                 logger.debug(f"Access token renewed for comapny {company_id} with response {renew_token_res}")
