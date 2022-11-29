@@ -2,7 +2,7 @@
 from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.application.ApplicationConfig import ApplicationConfig
 
-from fdk_extension.api_blueprints import setup_proxy_routes_blueprint
+from fdk_extension.api_blueprints import setup_proxy_routes
 from fdk_extension.extension import FdkExtensionClient
 from fdk_extension.extension import extension
 from fdk_extension.handlers import setup_routes
@@ -37,14 +37,14 @@ def setup_fdk(data):
     extension.initialize(data)
 
     fdk_route = setup_routes()
-    platform_api_routes_bp, application_proxy_routes_bp = setup_proxy_routes_blueprint()
+    platform_api_routes, application_proxy_routes = setup_proxy_routes()
 
     return FdkExtensionClient(**{
         "fdk_handler": fdk_route,
         "extension": extension,
-        "platform_api_routes_bp": platform_api_routes_bp,
+        "platform_api_routes": platform_api_routes,
         "webhook_registry": extension.webhook_registry,
-        "application_proxy_routes_bp": application_proxy_routes_bp,
+        "application_proxy_routes": application_proxy_routes,
         "get_platform_client": get_platform_client,
         "get_application_client": get_application_client
 

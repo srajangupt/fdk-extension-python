@@ -9,7 +9,7 @@ from fdk_extension.session.session_storage import SessionStorage
 from fdk_extension.utilities import get_company_cookie_name
 
 async def session_middleware(request):
-    company_id = request.headers.get("x-company-id") or request.args.get("company_id") or 1
+    company_id = request.headers.get("x-company-id") or request.args.get("company_id")
     company_cookie_name = get_company_cookie_name(company_id=company_id)
     session_id = request.cookies.get(company_cookie_name)
     request.conn_info.ctx.fdk_session = await SessionStorage.get_session(session_id)
@@ -18,6 +18,7 @@ async def session_middleware(request):
 async def application_proxy_on_request(request):
     if request.headers.get("x-user-data"):
         request.conn_info.ctx.user = json.loads(request.headers["x-user-data"])
+        request.conn_info.ctx.user.user_id = request.conn_info.ctx.user._id
     if request.headers.get("x-application-data"):
         request.conn_info.ctx.application = json.loads(request.headers["x-application-data"])
         request.conn_info.ctx.application_config = ApplicationConfig({

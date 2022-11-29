@@ -8,9 +8,7 @@ from fdk_client.platform.PlatformConfig import PlatformConfig
 from fdk_client.common.utils import get_headers_with_signature
 from fdk_client.common.aiohttp_helper import AiohttpHelper
 
-from fdk_extension.constants import FYND_CLUSTER
-from fdk_extension.constants import OFFLINE_ACCESS_MODE
-from fdk_extension.constants import ONLINE_ACCESS_MODE
+from fdk_extension.constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
 from fdk_extension.exceptions import FdkInvalidExtensionJson
 from fdk_extension.session import Session, SessionStorage
 from fdk_extension.utilities.logger import get_logger
@@ -137,7 +135,7 @@ class Extension:
                 logger.debug(f"Access token renewed for comapny {company_id} with response {renew_token_res}")
 
         platform_client = PlatformClient(platform_config)
-        # TODO: add x-ext-lib-version headers
+        # # TODO: add x-ext-lib-version headers
         # platform_client.setExtraHeaders({
         #     'x-ext-lib-version': f"py/{__version__}"
         # })
