@@ -1,5 +1,4 @@
 """Extension class file."""
-from typing import Dict
 from urllib.parse import urljoin
 import base64, json
 
@@ -8,6 +7,7 @@ from fdk_client.platform.PlatformConfig import PlatformConfig
 from fdk_client.common.utils import get_headers_with_signature
 from fdk_client.common.aiohttp_helper import AiohttpHelper
 
+from fdk_extension import __version__
 from fdk_extension.constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
 from fdk_extension.exceptions import FdkInvalidExtensionJson
 from fdk_extension.session import Session, SessionStorage
@@ -31,7 +31,7 @@ class Extension:
         self.webhook_registry = None
         self.__is_initialized = False
 
-    def initialize(self, data: Dict):
+    def initialize(self, data: dict):
         self.__is_initialized = False
 
         self.storage = data["storage"]
@@ -135,10 +135,9 @@ class Extension:
                 logger.debug(f"Access token renewed for comapny {company_id} with response {renew_token_res}")
 
         platform_client = PlatformClient(platform_config)
-        # # TODO: add x-ext-lib-version headers
-        # platform_client.setExtraHeaders({
-        #     'x-ext-lib-version': f"py/{__version__}"
-        # })
+        platform_client.setExtraHeaders({
+            'x-ext-lib-version': f"py/{__version__}"
+        })
         return platform_client
 
 
@@ -150,7 +149,7 @@ class Extension:
             headers = {
                 "Authorization": f"Basic {token}",
                 "Content-Type": "application/json",
-                # TODO: add x-ext-lib-version headers
+                'x-ext-lib-version': f"py/{__version__}"
             }
             headers = await get_headers_with_signature(
                 domain=self.cluster,
@@ -169,13 +168,13 @@ class Extension:
 class FdkExtensionClient:
 
     def __init__(self, **client_data):
-        self.fdk_blueprint = client_data["fdk_blueprint"]
+        self.fdk_route = client_data["fdk_handler"]
         self.extension = client_data["extension"]
-        self.platform_api_routes_bp = client_data["platform_api_routes_bp"]
-        self.application_proxy_routes_bp = client_data["application_proxy_routes_bp"]
+        self.platform_api_routes = client_data["platform_api_routes"]
+        self.webhook_registry = client_data["webhook_registry"]
+        self.application_proxy_routes = client_data["application_proxy_routes"]
         self.get_platform_client = client_data["get_platform_client"]
         self.get_application_client = client_data["get_application_client"]
-        self.webhook_registry = client_data["webhook_registry"]
 
 
 extension = Extension()

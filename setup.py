@@ -34,7 +34,7 @@ setup(
         exclude=("examples*", )
     ),
     install_requires=[
-        "fdk_client@git+https://github.com/gofynd/fdk-client-python.git@0.1.27#egg=fdk_client",
+        "fdk_client@git+https://github.com/gofynd/fdk-client-python.git@fyndx0#egg=fdk_client",
         "sanic>=22.9.0",
         "aioredis>=2.0.0",
         "structlog>=20.1.0"

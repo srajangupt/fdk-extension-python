@@ -121,13 +121,10 @@ async def auth_handler(request):
 
         request.conn_info.ctx.extension = extension
 
-        # # TODO: Add webhookregistry logic
-        # if (ext.webhookRegistry.isInitialized) {
-        #     const client = await ext.getPlatformClient(companyId, req.fdkSession);
-        #     await ext.webhookRegistry.syncEvents(client, null, true).catch((err) => {
-        #         logger.error(err);
-        #     });
-        # }
+        if extension.webhook_registry.is_initialized():
+            client = await extension.get_platform_client(
+                company_id=company_id, session=request.conn_info.ctx.fdk_session)
+            await extension.webhook_registry.sync_events(client, None, True)
         
         redirect_url = await extension.callbacks["auth"](request)
         next_response = redirect(redirect_url, headers={"x-company-id": str(company_id)})
@@ -179,13 +176,10 @@ async def auto_install_handler(request):
         if not extension.is_online_access_mode():
             await SessionStorage.save_session(session=session)
 
-        # TODO: Add webhookregistry logic        
-        # if (ext.webhookRegistry.isInitialized) {
-        #     const client = await ext.getPlatformClient(company_id, session);
-        #     await ext.webhookRegistry.syncEvents(client, null, true).catch((err) => {
-        #         logger.error(err);
-        #     });
-        # }
+        if extension.webhook_registry.is_initialized():
+            client = await extension.get_platform_client(
+                company_id=company_id, session=request.conn_info.ctx.fdk_session)
+            await extension.webhook_registry.sync_events(client, None, True)
 
 
         logger.debug(f"Extension installed for company: {company_id} on company creation.")
