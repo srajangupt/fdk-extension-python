@@ -181,7 +181,7 @@ class WebhookRegistry:
 
         try:
             if register_new:
-                response = await platform_client.webhook.registerSubscriberToEvent(body=subscriber_config)
+                await platform_client.webhook.registerSubscriberToEvent(body=subscriber_config)
 
                 if self._fdk_config["debug"]:
                     event_map = {}
@@ -197,7 +197,7 @@ class WebhookRegistry:
                                    if each_event_id not in subscriber_config["event_id"]])
 
                 if event_diff or config_updated:
-                    response = await platform_client.webhook.updateSubscriberConfig(body=subscriber_config)
+                    await platform_client.webhook.updateSubscriberConfig(body=subscriber_config)
 
                     if self._fdk_config.get("debug"):
                         event_map = {}
@@ -333,10 +333,11 @@ class WebhookRegistry:
             headers = await get_headers_with_signature(
                 domain=self._fdk_config.get('cluster'),
                 method="post",
-                url=url,
+                url="/service/common/webhook/v1.0/events/query-event-details",
                 query_string="",
                 headers=headers,
-                body=data
+                body=data,
+                exclude_headers=list(headers.keys())
             )
             response = AiohttpHelper().aiohttp_request(request_type="POST", url=url, data=data, headers=headers)
             response_data: dict = response["json"]

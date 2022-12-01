@@ -10,9 +10,10 @@ from .constants import *
 from .exceptions import FdkSessionNotFoundError, FdkInvalidOAuthError
 from .extension import extension
 from .middleware.session_middleware import session_middleware
-from .session import Session
-from .session import SessionStorage
-from .utilities import logger, get_company_cookie_name
+from .session.session import Session
+from .session.session_storage import SessionStorage
+from .utilities import logger
+from .utilities.utility import get_company_cookie_name
 
 logger = logger.get_logger()
 
@@ -84,11 +85,11 @@ async def auth_handler(request):
         platform_config = extension.get_platform_config(company_id)
         await platform_config.oauthClient.verifyCallback(request.args)
 
-        token = platform_config.oauthClient.raw_token
+        token: dict = platform_config.oauthClient.raw_token
         session_expires = datetime.now() + timedelta(seconds=token["expires_in"])
 
         request.conn_info.ctx.fdk_session.expires = session_expires
-        token.access_token_validity = int(session_expires.timestamp()*1000)
+        token["access_token_validity"] = int(session_expires.timestamp()*1000)
         request.conn_info.ctx.fdk_session.update_token(token)
 
         await SessionStorage.save_session(request.conn_info.ctx.fdk_session)

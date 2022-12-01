@@ -10,9 +10,9 @@ from fdk_client.common.aiohttp_helper import AiohttpHelper
 from . import __version__
 from .constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
 from .exceptions import FdkInvalidExtensionJson
-from .session import Session, SessionStorage
+from .session.session import Session
 from .utilities.logger import get_logger
-from .utilities import is_valid_url, get_current_timestamp
+from .utilities.utility import is_valid_url, get_current_timestamp
 from .webhook import WebhookRegistry
 
 logger = get_logger()
@@ -31,7 +31,7 @@ class Extension:
         self.webhook_registry = None
         self.__is_initialized = False
 
-    def initialize(self, data: dict):
+    async def initialize(self, data: dict):
         self.__is_initialized = False
 
         self.storage = data["storage"]
@@ -64,7 +64,7 @@ class Extension:
         self.webhook_registry = WebhookRegistry()
 
         # Fetching Extesnion data
-        extension_data = self.get_extension_details()
+        extension_data = await self.get_extension_details()
 
         # base url
         if (data.get("base_url") and not is_valid_url(data.get("base_url"))):
@@ -81,7 +81,7 @@ class Extension:
         logger.debug("Extension initialized")
 
         if data.get("webhook_config"):
-            self.webhook_registry.initialize(data["webhook_config"], data)
+            await self.webhook_registry.initialize(data["webhook_config"], data)
 
         self.__is_initialized = True
 
@@ -90,7 +90,7 @@ class Extension:
         return self.__is_initialized
 
 
-    def verify_scopes(scopes, extension_data):
+    def verify_scopes(self, scopes, extension_data):
         missing_scopes = [scope for scope in scopes if scope not in extension_data]
         if (not scopes or len(scopes) <= 0 or len(missing_scopes)):
             raise FdkInvalidExtensionJson(f"Invalid scopes in extension config. Invalid scopes: {', '.join(missing_scopes)}")
@@ -119,6 +119,8 @@ class Extension:
     async def get_platform_client(self, company_id, session: Session):
         if (not self.is_initialized()):
             raise FdkInvalidExtensionJson("Extension not initialized due to invalid data")
+
+        from .session.session_storage import SessionStorage
 
         platform_config = self.get_platform_config(company_id)
         platform_config.oauthClient.setToken(session)
@@ -154,10 +156,10 @@ class Extension:
             headers = await get_headers_with_signature(
                 domain=self.cluster,
                 method="get",
-                url=url,
+                url=f"/service/panel/partners/v1.0/extensions/details/{self.api_key}",
                 query_string="",
                 headers=headers,
-                exclude_headers=["Authorization"]
+                exclude_headers=list(headers.keys())
             )
             reponse = await AiohttpHelper().aiohttp_request(request_type="GET", url=url, headers=headers)
             return reponse["json"]

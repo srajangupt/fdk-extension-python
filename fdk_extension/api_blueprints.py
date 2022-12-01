@@ -5,7 +5,7 @@ from .middleware.api_middleware import platform_api_on_request
 from .middleware.session_middleware import session_middleware
 
 
-def setup_proxy_routes() -> tuple(Blueprint, Blueprint):
+def setup_proxy_routes():
     platform_api_routes = Blueprint("platform_api_routes_bp")
     platform_api_routes.middleware(session_middleware, "request")
     platform_api_routes.middleware(platform_api_on_request, "request")

@@ -6,8 +6,10 @@ from .api_blueprints import setup_proxy_routes
 from .extension import FdkExtensionClient
 from .extension import extension
 from .handlers import setup_routes
-from .session import Session
-from .session import SessionStorage
+from .session.session import Session
+from .session.session_storage import SessionStorage
+
+import asyncio
 
 
 async def get_platform_client(company_id):
@@ -34,7 +36,7 @@ async def get_application_client(application_id, application_token):
 
 
 def setup_fdk(data):
-    extension.initialize(data)
+    asyncio.run(extension.initialize(data))
 
     fdk_route = setup_routes()
     platform_api_routes, application_proxy_routes = setup_proxy_routes()
