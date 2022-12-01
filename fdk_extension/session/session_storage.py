@@ -1,10 +1,9 @@
-from fdk_extension.session import Session
 from datetime import datetime
-
-from fdk_extension.extension import extension
 from typing import Text, Dict
 import json
 
+from ..extension import extension
+from .session import Session
 
 class SessionStorage:
 

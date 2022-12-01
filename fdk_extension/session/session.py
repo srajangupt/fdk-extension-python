@@ -2,9 +2,9 @@ import hashlib
 import json
 import uuid
 
-from fdk_extension.constants import ONLINE_ACCESS_MODE
-from fdk_extension.utilities.utility import isoformat_to_datetime
-from fdk_extension.utilities.utility import json_serial
+from ..constants import ONLINE_ACCESS_MODE
+from ..utilities.utility import isoformat_to_datetime
+from ..utilities.utility import json_serial
 
 
 class Session:

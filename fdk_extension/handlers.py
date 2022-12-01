@@ -6,13 +6,13 @@ from sanic.blueprints import Blueprint
 from sanic.response import json as json_response
 from sanic.response import redirect
 
-from fdk_extension.constants import *
-from fdk_extension.exceptions import FdkSessionNotFoundError, FdkInvalidOAuthError
-from fdk_extension.extension import extension
-from fdk_extension.middleware.api_middleware import session_middleware
-from fdk_extension.session import Session
-from fdk_extension.session import SessionStorage
-from fdk_extension.utilities import logger, get_company_cookie_name
+from .constants import *
+from .exceptions import FdkSessionNotFoundError, FdkInvalidOAuthError
+from .extension import extension
+from .middleware.session_middleware import session_middleware
+from .session import Session
+from .session import SessionStorage
+from .utilities import logger, get_company_cookie_name
 
 logger = logger.get_logger()
 

@@ -6,13 +6,13 @@ import re
 import ujson
 
 
-from fdk_extension.constants import ASSOCIATION_CRITERIA, TEST_WEBHOOK_EVENT_NAME
-from fdk_extension.exceptions import FdkInvalidHMacError
-from fdk_extension.exceptions import FdkInvalidWebhookConfig
-from fdk_extension.exceptions import FdkWebhookHandlerNotFound
-from fdk_extension.exceptions import FdkWebhookProcessError
-from fdk_extension.exceptions import FdkWebhookRegistrationError
-from fdk_extension.utilities.logger import get_logger
+from .constants import ASSOCIATION_CRITERIA, TEST_WEBHOOK_EVENT_NAME
+from .exceptions import FdkInvalidHMacError
+from .exceptions import FdkInvalidWebhookConfig
+from .exceptions import FdkWebhookHandlerNotFound
+from .exceptions import FdkWebhookProcessError
+from .exceptions import FdkWebhookRegistrationError
+from .utilities.logger import get_logger
 
 from fdk_client.common.aiohttp_helper import AiohttpHelper
 from fdk_client.common.utils import get_headers_with_signature

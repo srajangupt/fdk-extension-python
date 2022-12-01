@@ -7,13 +7,13 @@ from fdk_client.platform.PlatformConfig import PlatformConfig
 from fdk_client.common.utils import get_headers_with_signature
 from fdk_client.common.aiohttp_helper import AiohttpHelper
 
-from fdk_extension import __version__
-from fdk_extension.constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
-from fdk_extension.exceptions import FdkInvalidExtensionJson
-from fdk_extension.session import Session, SessionStorage
-from fdk_extension.utilities.logger import get_logger
-from fdk_extension.utilities import is_valid_url, get_current_timestamp
-from fdk_extension.webhook import WebhookRegistry
+from . import __version__
+from .constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
+from .exceptions import FdkInvalidExtensionJson
+from .session import Session, SessionStorage
+from .utilities.logger import get_logger
+from .utilities import is_valid_url, get_current_timestamp
+from .webhook import WebhookRegistry
 
 logger = get_logger()
 

@@ -4,15 +4,9 @@ from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.application.ApplicationConfig import ApplicationConfig
 from sanic.response import json as json_response
 
-from fdk_extension.extension import extension
-from fdk_extension.session.session_storage import SessionStorage
-from fdk_extension.utilities import get_company_cookie_name
+from ..extension import extension
 
-async def session_middleware(request):
-    company_id = request.headers.get("x-company-id") or request.args.get("company_id")
-    company_cookie_name = get_company_cookie_name(company_id=company_id)
-    session_id = request.cookies.get(company_cookie_name)
-    request.conn_info.ctx.fdk_session = await SessionStorage.get_session(session_id)
+
 
 
 async def application_proxy_on_request(request):
