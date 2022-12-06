@@ -69,7 +69,7 @@ class WebhookRegistry:
         return self._handler_map and self._config["subscribe_on_install"]
 
 
-    def _validate_events_map(handler_config: dict):
+    def _validate_events_map(self, handler_config: dict):
         event_config.pop("event_not_found", None)
         event_config["event_not_found"] = {}
 
@@ -78,7 +78,7 @@ class WebhookRegistry:
                 event_config["event_not_found"][key] = handler_config[key]["version"]
 
 
-    def _get_event_id_map(events: list) -> dict:
+    def _get_event_id_map(self, events: list) -> dict:
         event_map = {}
         for event in events:
             event_map[f"{event['event_category']}/{event['event_name']}/{event['event_type']}/{event['version']}"] = event['id']
@@ -119,7 +119,7 @@ class WebhookRegistry:
         return updated
 
     async def sync_events(self, platform_client: PlatformClient, config=None, enable_webhooks=None):
-        if not self.is_initialized():
+        if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
         logger.debug("Webhook sync events started")
         if config:
@@ -211,7 +211,7 @@ class WebhookRegistry:
 
 
     async def enable_sales_channel_webhook(self, platform_client, application_id):
-        if not self.is_initialized():
+        if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
 
         if self._config["subscribed_saleschannel"] != "specific":
@@ -243,7 +243,7 @@ class WebhookRegistry:
 
 
     async def disable_sales_channel_webhook(self, platform_client, application_id):
-        if not self.is_initialized():
+        if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
         
         if self._config["subscribed_saleschannel"] != "specific":
@@ -278,7 +278,7 @@ class WebhookRegistry:
             raise FdkInvalidHMacError("Signature passed does not match calculated body signature")
 
     async def process_webhook(self, request):
-        if not self.is_initialized():
+        if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
         try:
             body = request.json
@@ -330,7 +330,7 @@ class WebhookRegistry:
             headers= {
                 "Content-Type": "application/json"
             }
-            headers = await get_headers_with_signature(
+            headers = get_headers_with_signature(
                 domain=self._fdk_config.get('cluster'),
                 method="post",
                 url="/service/common/webhook/v1.0/events/query-event-details",

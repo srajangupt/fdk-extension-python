@@ -122,7 +122,7 @@ async def auth_handler(request):
 
         request.conn_info.ctx.extension = extension
 
-        if extension.webhook_registry.is_initialized():
+        if extension.webhook_registry.is_initialized:
             client = await extension.get_platform_client(
                 company_id=company_id, session=request.conn_info.ctx.fdk_session)
             await extension.webhook_registry.sync_events(client, None, True)
@@ -177,7 +177,7 @@ async def auto_install_handler(request):
         if not extension.is_online_access_mode():
             await SessionStorage.save_session(session=session)
 
-        if extension.webhook_registry.is_initialized():
+        if extension.webhook_registry.is_initialized:
             client = await extension.get_platform_client(
                 company_id=company_id, session=request.conn_info.ctx.fdk_session)
             await extension.webhook_registry.sync_events(client, None, True)

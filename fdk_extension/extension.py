@@ -153,7 +153,7 @@ class Extension:
                 "Content-Type": "application/json",
                 'x-ext-lib-version': f"py/{__version__}"
             }
-            headers = await get_headers_with_signature(
+            headers = get_headers_with_signature(
                 domain=self.cluster,
                 method="get",
                 url=f"/service/panel/partners/v1.0/extensions/details/{self.api_key}",
