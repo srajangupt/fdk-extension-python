@@ -45,7 +45,7 @@ async def install_handler(request):
             auth_callback += "?application_id=" + request.args.get("application_id")
 
         # start authorization flow
-        redirect_url = await platform_config.oauthClient.startAuthorization({
+        redirect_url = platform_config.oauthClient.startAuthorization({
             "scope": session.scope,
             "redirectUri": auth_callback,
             "state": session.state,
@@ -135,7 +135,7 @@ async def auth_handler(request):
         next_response.cookies[company_cookie_name]["secure"] = True
         next_response.cookies[company_cookie_name]["samesite"] = "None"
         next_response.cookies[company_cookie_name]["httponly"] = False
-        next_response.cookies[company_cookie_name]["expires"] = session.expires
+        next_response.cookies[company_cookie_name]["expires"] = session_expires
         # TODO: add signed cookie option
 
         logger.debug(f"Redirecting after auth callback to url: {redirect_url}")

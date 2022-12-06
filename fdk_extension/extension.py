@@ -123,7 +123,7 @@ class Extension:
         from .session.session_storage import SessionStorage
 
         platform_config = self.get_platform_config(company_id)
-        platform_config.oauthClient.setToken(session)
+        platform_config.oauthClient.setTokenFromSession(session)
         platform_config.oauthClient.token_expires_at = session.access_token_validity
 
         if (session.access_token_validity and session.refresh_token):
