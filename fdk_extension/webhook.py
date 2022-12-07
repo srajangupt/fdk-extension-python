@@ -157,6 +157,7 @@ class WebhookRegistry:
             auth_meta = subscriber_config["auth_meta"]
             event_configs = subscriber_config["event_configs"]
             subscriber_config.pop("event_configs", None)
+            subscriber_config.pop("custom_headers", None)
 
             subscriber_config["event_id"] = []
             existing_events = [each_event["id"] for each_event in event_configs]
@@ -176,14 +177,14 @@ class WebhookRegistry:
             event_name = f"{event_name}/{self._handler_map[event_name]['version']}"
             event_id = event_config["events_map"][event_name]
             if event_id:
-                subscriber_config[event_id].append(event_id)
+                subscriber_config["event_id"].append(event_id)
 
 
         try:
             if register_new:
                 await platform_client.webhook.registerSubscriberToEvent(body=subscriber_config)
 
-                if self._fdk_config["debug"]:
+                if self._fdk_config.get("debug", None):
                     event_map = {}
                     for event_name in event_config["events_map"]:
                         event_map[event_config["events_map"][event_name]] = event_name
@@ -199,7 +200,7 @@ class WebhookRegistry:
                 if event_diff or config_updated:
                     await platform_client.webhook.updateSubscriberConfig(body=subscriber_config)
 
-                    if self._fdk_config.get("debug"):
+                    if self._fdk_config.get("debug", None):
                         event_map = {}
                         for event_name in event_config["events_map"]:
                             event_map[event_config["events_map"][event_name]] = event_name
@@ -210,7 +211,7 @@ class WebhookRegistry:
             raise FdkWebhookRegistrationError(f"Failed to sync webhook events. Reason: {str(e)}")
 
 
-    async def enable_sales_channel_webhook(self, platform_client, application_id):
+    async def enable_sales_channel_webhook(self, platform_client: PlatformClient, application_id):
         if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
 
@@ -226,6 +227,7 @@ class WebhookRegistry:
             # TODO: deconstuct/construct dict rather then deleting key
             event_configs = subscriber_config["event_configs"]
             subscriber_config.pop("event_configs", None)
+            subscriber_config.pop("custom_headers", None)
 
             subscriber_config["event_id"] = [each_event["id"] for each_event in event_configs]
             arr_application_id = subscriber_config["association"].get("application_id") or []
@@ -242,7 +244,7 @@ class WebhookRegistry:
             raise FdkWebhookRegistrationError(f"Failed to add saleschannel webhook. Reason: {str(e)}")
 
 
-    async def disable_sales_channel_webhook(self, platform_client, application_id):
+    async def disable_sales_channel_webhook(self, platform_client: PlatformClient, application_id):
         if not self.is_initialized:
             raise FdkInvalidWebhookConfig("Webhook registry not initialized")
         
@@ -256,6 +258,7 @@ class WebhookRegistry:
             # TODO: deconstuct/construct dict rather then deleting key
             event_configs = subscriber_config["event_configs"]
             subscriber_config.pop("event_configs", None)
+            subscriber_config.pop("custom_headers", None)
 
             subscriber_config["event_id"] = [each_event["id"] for each_event in event_configs]
             arr_application_id = subscriber_config["association"].get("application_id") or []
@@ -306,7 +309,7 @@ class WebhookRegistry:
     async def get_subscribe_config(self, platform_client: PlatformClient) -> dict:
         try:
             subscriber_config = await platform_client.webhook.getSubscribersByExtensionId(extension_id=self._fdk_config["api_key"])
-            return subscriber_config["items"][0]
+            return subscriber_config["json"]["items"][0] if subscriber_config["json"]["items"] else None
         except Exception as e:
             raise FdkInvalidWebhookConfig(f"Error while fetching webhook subscriber configuration, Reason: {str(e)}")
 
@@ -339,7 +342,7 @@ class WebhookRegistry:
                 body=data,
                 exclude_headers=list(headers.keys())
             )
-            response = AiohttpHelper().aiohttp_request(request_type="POST", url=url, data=data, headers=headers)
+            response = await AiohttpHelper().aiohttp_request(request_type="POST", url=url, data=data, headers=headers)
             response_data: dict = response["json"]
             event_config["event_configs"] = response_data.get("event_configs")
             logger.debug(f"Webhook events config received: {ujson.dumps(response_data)}")
