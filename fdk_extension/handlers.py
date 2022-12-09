@@ -3,8 +3,10 @@ from datetime import datetime, timedelta
 import uuid
 
 from sanic.blueprints import Blueprint
+from sanic.blueprint_group import BlueprintGroup
 from sanic.response import json as json_response
 from sanic.response import redirect
+from sanic.request import Request
 
 from .constants import *
 from .exceptions import FdkSessionNotFoundError, FdkInvalidOAuthError
@@ -18,7 +20,7 @@ from .utilities.utility import get_company_cookie_name
 logger = logger.get_logger()
 
 
-async def install_handler(request):
+async def install_handler(request: Request):
     try:
         company_id = int(request.args.get("company_id"))
         platform_config = extension.get_platform_config(company_id)
@@ -72,7 +74,7 @@ async def install_handler(request):
         return json_response({"error_message": str(e)}, 500)
 
 
-async def auth_handler(request):
+async def auth_handler(request: Request):
     try:
         if not request.conn_info.ctx.fdk_session:
             raise FdkSessionNotFoundError("Can not complete oauth process as session not found")
@@ -146,7 +148,7 @@ async def auth_handler(request):
         return json_response({"error_message": str(e)}, 500)
 
 
-async def auto_install_handler(request):
+async def auto_install_handler(request: Request):
     try:
         company_id, code = int(request.json.get("company_id")), request.json.get("code")
 
@@ -196,7 +198,7 @@ async def auto_install_handler(request):
         return json_response({"error_message": str(e)}, 500)
 
 
-async def uninstall_handler(request):
+async def uninstall_handler(request: Request):
     try:
         company_id = request.json["company_id"]
         if not extension.is_online_access_mode():
@@ -214,7 +216,7 @@ async def uninstall_handler(request):
         return json_response({"error_message": str(e)}, 500)
 
 
-def setup_routes():
+def setup_routes() -> BlueprintGroup:
     fdk_routes_bp1 = Blueprint("fdk_routes_bp1")
     fdk_routes_bp2 = Blueprint("fdk_routes_bp2")
 

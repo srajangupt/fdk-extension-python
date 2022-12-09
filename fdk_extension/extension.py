@@ -4,6 +4,7 @@ import base64, json
 
 from fdk_client.platform.PlatformClient import PlatformClient
 from fdk_client.platform.PlatformConfig import PlatformConfig
+from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.common.utils import get_headers_with_signature
 from fdk_client.common.aiohttp_helper import AiohttpHelper
 
@@ -14,6 +15,9 @@ from .session.session import Session
 from .utilities.logger import get_logger
 from .utilities.utility import is_valid_url, get_current_timestamp
 from .webhook import WebhookRegistry
+
+from sanic.blueprint_group import BlueprintGroup
+from sanic.blueprints import Blueprint
 
 logger = get_logger()
 
@@ -31,7 +35,7 @@ class Extension:
         self.webhook_registry = None
         self.__is_initialized = False
 
-    async def initialize(self, data: dict):
+    async def initialize(self, data: dict) -> None:
         self.__is_initialized = False
 
         self.storage = data["storage"]
@@ -76,7 +80,7 @@ class Extension:
         # scopes
         if (data.get("scopes")):
             data["scopes"] = self.verify_scopes(data["scopes"], extension_data)
-        self.scopes = data["scopes"] or extension_data["scope"]
+        self.scopes = data.get("scopes", []) or extension_data["scope"]
 
         logger.debug("Extension initialized")
 
@@ -86,23 +90,23 @@ class Extension:
         self.__is_initialized = True
 
 
-    def is_initialized(self):
+    def is_initialized(self) -> bool:
         return self.__is_initialized
 
 
-    def verify_scopes(self, scopes, extension_data):
-        missing_scopes = [scope for scope in scopes if scope not in extension_data]
+    def verify_scopes(self, scopes: list, extension_data: dict) -> list:
+        missing_scopes = [scope for scope in scopes if scope not in extension_data["scope"]]
         if (not scopes or len(scopes) <= 0 or len(missing_scopes)):
             raise FdkInvalidExtensionJson(f"Invalid scopes in extension config. Invalid scopes: {', '.join(missing_scopes)}")
         return scopes
 
-    def get_auth_callback(self):
+    def get_auth_callback(self) -> str:
         return urljoin(self.base_url, "/fp/auth")
 
-    def is_online_access_mode(self):
+    def is_online_access_mode(self) -> bool:
         return self.access_mode == ONLINE_ACCESS_MODE
 
-    def get_platform_config(self, company_id):
+    def get_platform_config(self, company_id) -> PlatformConfig:
         if (not self.is_initialized()):
             raise FdkInvalidExtensionJson("Extension not initialized due to invalid data")
 
@@ -116,7 +120,7 @@ class Extension:
         return platform_config
 
 
-    async def get_platform_client(self, company_id, session: Session):
+    async def get_platform_client(self, company_id, session: Session) -> PlatformClient:
         if (not self.is_initialized()):
             raise FdkInvalidExtensionJson("Extension not initialized due to invalid data")
 
@@ -144,7 +148,7 @@ class Extension:
 
 
     # Making API request to fetch extension details
-    async def get_extension_details(self):
+    async def get_extension_details(self) -> dict:
         try:
             url = f"{self.cluster}/service/panel/partners/v1.0/extensions/details/{self.api_key}"
             token = base64.b64encode(f"{self.api_key}:{self.api_secret}".encode()).decode()
@@ -170,13 +174,13 @@ class Extension:
 class FdkExtensionClient:
 
     def __init__(self, **client_data):
-        self.fdk_route = client_data["fdk_handler"]
-        self.extension = client_data["extension"]
-        self.platform_api_routes = client_data["platform_api_routes"]
-        self.webhook_registry = client_data["webhook_registry"]
-        self.application_proxy_routes = client_data["application_proxy_routes"]
-        self.get_platform_client = client_data["get_platform_client"]
-        self.get_application_client = client_data["get_application_client"]
+        self.fdk_route: BlueprintGroup = client_data["fdk_handler"]
+        self.extension: Extension = client_data["extension"]
+        self.platform_api_routes: Blueprint = client_data["platform_api_routes"]
+        self.webhook_registry: WebhookRegistry = client_data["webhook_registry"]
+        self.application_proxy_routes: Blueprint = client_data["application_proxy_routes"]
+        self.get_platform_client: PlatformClient = client_data["get_platform_client"]
+        self.get_application_client: ApplicationClient = client_data["get_application_client"]
 
 
 extension = Extension()

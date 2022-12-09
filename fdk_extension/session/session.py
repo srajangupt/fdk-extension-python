@@ -27,7 +27,7 @@ class Session:
     def clone_session(session):
         session_object = Session(session["session_id"], session["is_new"])
         for key in session:
-            if key in ["expires"]: # TODO: verify "access_token_validity" format 
+            if key in ["expires"]:
                 if session[key]:
                     session[key] = isoformat_to_datetime(session[key])
             setattr(session_object, key, session[key])

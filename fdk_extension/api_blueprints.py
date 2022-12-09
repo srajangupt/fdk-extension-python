@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from sanic import Blueprint
 
 from .middleware.api_middleware import application_proxy_on_request
@@ -5,7 +7,7 @@ from .middleware.api_middleware import platform_api_on_request
 from .middleware.session_middleware import session_middleware
 
 
-def setup_proxy_routes():
+def setup_proxy_routes() -> Tuple[Blueprint, Blueprint]:
     platform_api_routes = Blueprint("platform_api_routes_bp")
     platform_api_routes.middleware(session_middleware, "request")
     platform_api_routes.middleware(platform_api_on_request, "request")

@@ -1,6 +1,7 @@
 """Setup fdk file."""
 from fdk_client.application.ApplicationClient import ApplicationClient
 from fdk_client.application.ApplicationConfig import ApplicationConfig
+from fdk_client.platform.PlatformClient import PlatformClient
 
 from .api_blueprints import setup_proxy_routes
 from .extension import FdkExtensionClient
@@ -12,7 +13,7 @@ from .session.session_storage import SessionStorage
 import asyncio
 
 
-async def get_platform_client(company_id):
+async def get_platform_client(company_id: str) -> PlatformClient:
     client = None
     if not extension.is_online_access_mode():
         sid = Session.generate_session_id(False, **{
@@ -25,7 +26,7 @@ async def get_platform_client(company_id):
     return client
 
 
-async def get_application_client(application_id, application_token):
+async def get_application_client(application_id: str, application_token: str) -> ApplicationClient:
     application_config = ApplicationConfig({
         "applicationID": application_id,
         "applicationToken": application_token,
@@ -35,7 +36,7 @@ async def get_application_client(application_id, application_token):
     return application_client
 
 
-def setup_fdk(data):
+def setup_fdk(data: dict) -> FdkExtensionClient:
     asyncio.run(extension.initialize(data))
 
     fdk_route = setup_routes()
@@ -49,5 +50,4 @@ def setup_fdk(data):
         "application_proxy_routes": application_proxy_routes,
         "get_platform_client": get_platform_client,
         "get_application_client": get_application_client
-
     })
