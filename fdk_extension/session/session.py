@@ -8,20 +8,21 @@ from ..utilities.utility import json_serial
 
 
 class Session:
-    def __init__(self, session_id, is_new=True):
-        self.session_id = session_id
-        self.company_id = None
-        self.state = None
-        self.scope = None
-        self.expires = None
-        self.expires_in = None
-        self.access_token_validity = None
-        self.access_mode = ONLINE_ACCESS_MODE
-        self.access_token = None
-        self.current_user = None
-        self.refresh_token = None
-        self.is_new = is_new
-        self.extension_id = None
+    def __init__(self, session_id: str, is_new=True):
+        self.session_id: str = session_id
+        self.company_id: int = None
+        self.state: str = None
+        self.scope: list = None
+        self.expires: int = None
+        self.expires_in: int = None
+        self.access_token_validity: int = None
+        self.access_mode: str = ONLINE_ACCESS_MODE
+        self.access_token: str = None
+        self.current_user: dict = None
+        self.refresh_token: str = None
+        self.is_new: bool = is_new
+        self.extension_id: str = None
+
 
     @staticmethod
     def clone_session(session):

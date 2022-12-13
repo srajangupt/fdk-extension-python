@@ -15,6 +15,7 @@ from .session.session import Session
 from .utilities.logger import get_logger
 from .utilities.utility import is_valid_url, get_current_timestamp
 from .webhook import WebhookRegistry
+from .storage.redis_storage import RedisStorage
 
 from sanic.blueprint_group import BlueprintGroup
 from sanic.blueprints import Blueprint
@@ -24,16 +25,16 @@ logger = get_logger()
 
 class Extension:
     def __init__(self):
-        self.api_key = None
-        self.api_secret = None
-        self.storage = None
-        self.base_url = None
-        self.callbacks = None
-        self.access_mode = None
-        self.scopes = None
-        self.cluster = FYND_CLUSTER
-        self.webhook_registry = None
-        self.__is_initialized = False
+        self.api_key: str = None
+        self.api_secret: str = None
+        self.storage: RedisStorage = None
+        self.base_url: str = None
+        self.callbacks: dict = None
+        self.access_mode: str = None
+        self.scopes: list = None
+        self.cluster: str = FYND_CLUSTER
+        self.webhook_registry: WebhookRegistry = None
+        self.__is_initialized: bool = False
 
     async def initialize(self, data: dict) -> None:
         self.__is_initialized = False
@@ -165,8 +166,11 @@ class Extension:
                 headers=headers,
                 exclude_headers=list(headers.keys())
             )
-            reponse = await AiohttpHelper().aiohttp_request(request_type="GET", url=url, headers=headers)
-            return reponse["json"]
+            response = await AiohttpHelper().aiohttp_request(request_type="GET", url=url, headers=headers)
+            if response["status_code"] == 200:
+                return response["json"]
+            else:
+                raise FdkInvalidExtensionJson(f"{response['json']['message']}, Status: {response['status_code']}")
         except Exception as e:
             raise FdkInvalidExtensionJson(f"Invalid api_key or api_secret. Reason: {str(e)}")
 
