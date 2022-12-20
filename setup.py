@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import re
+import pathlib, pkg_resources
 from setuptools import find_packages, setup
 
 VERSION_FILE = "fdk_extension/__init__.py"
-with open(VERSION_FILE) as version_file:
+with pathlib.Path(VERSION_FILE).open() as version_file:
     match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
                       version_file.read(), re.MULTILINE)
 
@@ -12,6 +13,23 @@ if match:
     version = match.group(1)
 else:
     raise RuntimeError(f"Unable to find version string in {VERSION_FILE}.")
+
+# Reading requirements.txt file
+try:
+    with pathlib.Path("requirements/requirements.txt").open() as requirements:
+        install_requires = [str(requirement) for requirement in pkg_resources.parse_requirements(requirements)]
+except:
+    raise RuntimeError("Got error while reading requirements.txt file")
+
+
+# Reading requirements for test
+try:
+    with pathlib.Path("requirements/requirements_test.txt").open() as test_requirements:
+        test_requires = [str(requirement) for requirement in pkg_resources.parse_requirements(test_requirements)]
+except:
+    raise RuntimeError("Got Error while reading requirements_test.txt.")
+
+    
 
 with open("README.md") as readme_file:
     long_description = readme_file.read()
@@ -29,16 +47,13 @@ setup(
     project_urls={
         "Source Code": "https://github.com/gofynd/fdk-extension-python",
     },
-    download_url="https://pypi.org/project/tweepy/",
     packages=find_packages(
-        exclude=("examples*", )
+        exclude=("examples*", "tests*")
     ),
-    install_requires=[
-        "fdk_client@git+https://github.com/gofynd/fdk-client-python.git@fyndx0#egg=fdk_client",
-        "sanic>=22.9.0",
-        "aioredis>=2.0.0",
-        "structlog>=20.1.0"
-    ],
+    install_requires=install_requires,
+    extras_require={
+        "test": test_requires
+    },
     keywords=["FDK extension python", "Extension", "FDK"],
     python_requires=">=3.7",
     classifiers=[

@@ -1,5 +1,5 @@
 # FDK Extension Python
-3.6+
+3.7+
 FDK Extension Helper Python Library <br/>
 22.9.0+ Sanic
 
