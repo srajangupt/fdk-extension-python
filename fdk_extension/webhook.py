@@ -155,11 +155,11 @@ class WebhookRegistry:
         else:
             logger.debug(f"Webhook config on platform side for company id {platform_client._conf.companyId}: {ujson.dumps(subscriber_config)}")
 
-            # TODO: deconstuct/construct dict rather then deleting key
             auth_meta = subscriber_config["auth_meta"]
             event_configs = subscriber_config["event_configs"]
-            subscriber_config.pop("event_configs", None)
-            subscriber_config.pop("custom_headers", None)
+            for key in list(subscriber_config.keys()): 
+                if key not in ["id", "name", "webhook_url", "association", "status", "auth_meta", "email_id"]:
+                    subscriber_config.pop(key)
 
             subscriber_config["event_id"] = []
             existing_events = [each_event["id"] for each_event in event_configs]
@@ -226,10 +226,10 @@ class WebhookRegistry:
             if not subscriber_config:
                 raise FdkWebhookRegistrationError("Subscriber config not found")
 
-            # TODO: deconstuct/construct dict rather then deleting key
             event_configs = subscriber_config["event_configs"]
-            subscriber_config.pop("event_configs", None)
-            subscriber_config.pop("custom_headers", None)
+            for key in list(subscriber_config.keys()):
+                if key not in ["id", "name", "webhook_url", "association", "status", "auth_meta", "email_id"]:
+                    subscriber_config.pop(key)
 
             subscriber_config["event_id"] = [each_event["id"] for each_event in event_configs]
             arr_application_id = subscriber_config["association"].get("application_id") or []
@@ -257,10 +257,10 @@ class WebhookRegistry:
             if not subscriber_config:
                 raise FdkWebhookRegistrationError("Subscriber config not found")
 
-            # TODO: deconstuct/construct dict rather then deleting key
             event_configs = subscriber_config["event_configs"]
-            subscriber_config.pop("event_configs", None)
-            subscriber_config.pop("custom_headers", None)
+            for key in list(subscriber_config.keys()):
+                if key not in ["id", "name", "webhook_url", "association", "status", "auth_meta", "email_id"]:
+                    subscriber_config.pop(key)
 
             subscriber_config["event_id"] = [each_event["id"] for each_event in event_configs]
             arr_application_id = subscriber_config["association"].get("application_id") or []

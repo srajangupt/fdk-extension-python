@@ -25,3 +25,17 @@ def get_logger(*args, **kwargs) -> BoundLogger:
     )
 
     return structlog.get_logger(**kwargs)
+
+
+def safe_stringify(obj: object, cache: list=[]) -> dict:
+    if hasattr(obj, "__dict__"):
+        cache.append(obj)
+        temp: dict = obj.__dict__.copy()
+        for key, value in temp.items():
+            if hasattr(value, "__dict__"):
+                if value not in cache:
+                    temp[key] = safe_stringify(value, cache)
+                else:
+                    temp[key] = ""
+        return temp
+    return obj

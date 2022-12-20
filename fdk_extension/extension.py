@@ -12,7 +12,7 @@ from . import __version__
 from .constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
 from .exceptions import FdkInvalidExtensionJson
 from .session.session import Session
-from .utilities.logger import get_logger
+from .utilities.logger import get_logger, safe_stringify
 from .utilities.utility import is_valid_url, get_current_timestamp
 from .webhook import WebhookRegistry
 from .storage.redis_storage import RedisStorage
@@ -134,7 +134,7 @@ class Extension:
         if (session.access_token_validity and session.refresh_token):
             ac_nr_expired = (session.access_token_validity - get_current_timestamp() // 1000) <= 120
             if ac_nr_expired:
-                logger.debug(f"Renewing access token for company {company_id} with platform config {json.dumps(platform_config)}") # TODO: Safe stringfy json object
+                logger.debug(f"Renewing access token for company {company_id} with platform config {json.dumps(safe_stringify(platform_config))}")
                 renew_token_res = await platform_config.oauthClient.renewAccessToken(session.access_mode == OFFLINE_ACCESS_MODE)
                 renew_token_res["access_token_validity"] = platform_config.oauthClient.token_expires_at
                 session.update_token(renew_token_res)

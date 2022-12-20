@@ -64,7 +64,6 @@ async def install_handler(request: Request):
         next_response.cookies[company_cookie_name]["samesite"] = "None"
         next_response.cookies[company_cookie_name]["httponly"] = False
         next_response.cookies[company_cookie_name]["expires"] = session.expires
-        # TODO: add signed cookie option
 
         await SessionStorage.save_session(session)
 
@@ -138,7 +137,6 @@ async def auth_handler(request: Request):
         next_response.cookies[company_cookie_name]["samesite"] = "None"
         next_response.cookies[company_cookie_name]["httponly"] = False
         next_response.cookies[company_cookie_name]["expires"] = session_expires
-        # TODO: add signed cookie option
 
         logger.debug(f"Redirecting after auth callback to url: {redirect_url}")
 
