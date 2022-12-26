@@ -16,9 +16,9 @@ from .utilities.logger import get_logger, safe_stringify
 from .utilities.utility import is_valid_url, get_current_timestamp
 from .webhook import WebhookRegistry
 from .storage.redis_storage import RedisStorage
+from .api_blueprints import ClientBlueprintGroup
 
 from sanic.blueprint_group import BlueprintGroup
-from sanic.blueprints import Blueprint
 
 logger = get_logger()
 
@@ -180,9 +180,9 @@ class FdkExtensionClient:
     def __init__(self, **client_data):
         self.fdk_route: BlueprintGroup = client_data["fdk_handler"]
         self.extension: Extension = client_data["extension"]
-        self.platform_api_routes: Blueprint = client_data["platform_api_routes"]
+        self.platform_api_routes: ClientBlueprintGroup = client_data["platform_api_routes"]
         self.webhook_registry: WebhookRegistry = client_data["webhook_registry"]
-        self.application_proxy_routes: Blueprint = client_data["application_proxy_routes"]
+        self.application_proxy_routes: ClientBlueprintGroup = client_data["application_proxy_routes"]
         self.get_platform_client: PlatformClient = client_data["get_platform_client"]
         self.get_application_client: ApplicationClient = client_data["get_application_client"]
 
