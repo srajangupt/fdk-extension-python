@@ -1,12 +1,12 @@
 """Exception classes."""
 
 
-class FdkInvalidExtensionJson(Exception):
-    """Class FdkInvalidExtensionJson."""
+class FdkInvalidConfig(Exception):
+    """Class FdkInvalidConfig."""
 
     def __init__(self, message="Failed while validating extension json."):
         """Initialize function __init__."""
-        super(FdkInvalidExtensionJson, self).__init__(message)
+        super(FdkInvalidConfig, self).__init__(message)
 
 
 class FdkClusterMetaMissingException(Exception):

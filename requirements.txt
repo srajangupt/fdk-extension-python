@@ -1,4 +1,0 @@
-fdk_client@git+https://github.com/gofynd/fdk-client-python.git@fyndx0#egg=fdk_client
-sanic
-aioredis
-structlog~=20.1.0

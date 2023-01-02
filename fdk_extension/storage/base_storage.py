@@ -20,7 +20,7 @@ class BaseStorage(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    async def setex(self, key, value, ttl):
+    async def setex(self, key, ttl, value):
         pass
 
     @abstractmethod

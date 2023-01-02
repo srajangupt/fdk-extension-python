@@ -1,10 +1,9 @@
-from sanic_boilerplate.session.session import Session
 from datetime import datetime
-
-from sanic_boilerplate.extension import extension
 from typing import Text, Dict
 import json
 
+from ..extension import extension
+from .session import Session
 
 class SessionStorage:
 

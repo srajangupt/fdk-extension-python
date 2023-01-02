@@ -1,8 +1,10 @@
 """Utility functions."""
 import re
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
+import time
 from typing import Text
+
+from fdk_extension.constants import SESSION_COOKIE_NAME
 
 
 def is_valid_url(url: Text):
@@ -31,3 +33,8 @@ def json_serial(obj):
 def isoformat_to_datetime(isoformat_string):
     return datetime.strptime(isoformat_string, "%Y-%m-%dT%H:%M:%S.%f")
 
+def get_current_timestamp() -> int:
+    return int(time.time_ns() // 1_000_000)
+
+def get_company_cookie_name(company_id) -> str:
+    return f"{SESSION_COOKIE_NAME}_{str(company_id)}"

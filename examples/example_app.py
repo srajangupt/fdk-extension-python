@@ -2,17 +2,17 @@ import os
 import sys
 
 import aioredis
-from sanic import Sanic
+from sanic import Sanic, Blueprint
 from sanic import response
 
 import logging
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-print(sys.path)
 
-from sanic_boilerplate import setup_fdk
+from fdk_extension import setup_fdk
 from examples.extension_handlers import extension_handler
-from sanic_boilerplate.utilities.logger import get_logger
+from fdk_extension.utilities.logger import get_logger
+from fdk_extension.storage.redis_storage import RedisStorage
 
 logger = get_logger()
 
@@ -51,20 +51,20 @@ async def handle_ext_install(payload, company_id):
 
 
 fdk_extension_client = setup_fdk({
-    "api_key": "615476f46891c744b15826bd",
-    "api_secret": "QGcx8kYiXd9qF01",
-    "base_url": base_url,
-    "scopes": ["company"],
+    "api_key": "6220daa4a5414621b975a41f",
+    "api_secret": "EbeGBRC~Fthv5om",
+    "base_url": base_url, # this is optional
+    "scopes": ["company/product"], # this is optional
     "callbacks": extension_handler,
-    "storage": redis_connection,
+    "storage": RedisStorage(redis_connection),
     "access_mode": "offline",
     "debug": True,
-    "cluster": "https://api.fyndx1.de",  # this is optional by default it points to prod.
+    "cluster": "https://api.fyndx0.de",  # this is optional by default it points to prod.
     "webhook_config": {
         "api_path": "/webhook",
         "notification_email": "test2@abc.com",  # required
         "subscribed_saleschannel": "specific",  # optional
-        "event_map": {
+        "event_map": {  # required
             "application/coupon/update": {
                 "version": '1',
                 "handler": handle_coupon_edit
@@ -129,23 +129,29 @@ async def disable_sales_channel_webhook_handler(request, application_id):
         return response.json({"error_message": str(e), "success": False}, 500)
 
 
-app.blueprint(fdk_extension_client.fdk_blueprint)
+app.blueprint(fdk_extension_client.fdk_route)
 
-fdk_extension_client.platform_api_routes_bp.add_route(test_route_handler, "/test/routes")
+platform_bp = Blueprint("platform blueprint")
+platform_bp.add_route(test_route_handler, "/test/routes")
 
-fdk_extension_client.application_proxy_routes_bp.add_route(test_route_handler, "/1234")
+application_bp = Blueprint("application blueprint")
+application_bp.add_route(test_route_handler, "/1234")
 
 app.add_route(webhook_handler, "/webhook", methods=["POST"])
 
-fdk_extension_client.platform_api_routes_bp.add_route(enable_sales_channel_webhook_handler,
+platform_bp.add_route(enable_sales_channel_webhook_handler,
                                                       "/webhook/application/<application_id>/subscribe",
                                                       methods=["POST"])
-fdk_extension_client.platform_api_routes_bp.add_route(disable_sales_channel_webhook_handler,
+platform_bp.add_route(disable_sales_channel_webhook_handler,
                                                       "/webhook/application/<application_id>/unsubscribe",
                                                       methods=["POST"])
 
-app.blueprint(fdk_extension_client.platform_api_routes_bp)
-app.blueprint(fdk_extension_client.application_proxy_routes_bp)
+fdk_extension_client.platform_api_routes.append(platform_bp)
+fdk_extension_client.application_proxy_routes.append(application_bp)
+
+app.blueprint(fdk_extension_client.platform_api_routes)
+app.blueprint(fdk_extension_client.application_proxy_routes)
 
 # debug logs enabled with debug = True
-app.run(host="0.0.0.0", port=8000, debug=True)
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=8000, debug=True)

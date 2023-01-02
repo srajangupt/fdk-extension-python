@@ -1,9 +1,12 @@
-from sanic_boilerplate.storage.base_storage import BaseStorage
+from .base_storage import BaseStorage
+from typing import Union
+
+from aioredis.client import Redis
 
 
 class RedisStorage(BaseStorage):
 
-    def __init__(self, client, prefix_key):
+    def __init__(self, client: Redis, prefix_key: str=""):
         super().__init__(prefix_key)
         self.client = client
 
@@ -16,7 +19,7 @@ class RedisStorage(BaseStorage):
     async def delete(self, key):
         await self.client.delete(self.prefix_key + key)
 
-    async def setex(self, key, value, ttl):
+    async def setex(self, key, ttl, value):
         return await self.client.setex(self.prefix_key + key, ttl, value)
 
     async def hget(self, key, hash_key):
