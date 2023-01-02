@@ -41,8 +41,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
-    author="Meet Koriya",
-    author_email="meetkoriya@fynd.com",
+    author="Fynd Developer",
+    author_email="dev@fynd.com",
     url="https://github.com/gofynd/fdk-extension-python",
     project_urls={
         "Source Code": "https://github.com/gofynd/fdk-extension-python",
@@ -55,7 +55,7 @@ setup(
         "test": test_requires
     },
     keywords=["FDK extension python", "Extension", "FDK"],
-    python_requires=">=3.7",
+    python_requires=">=3.7, <3.11",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Software Development :: Libraries",
@@ -69,7 +69,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3 :: Only"
     ],
 )

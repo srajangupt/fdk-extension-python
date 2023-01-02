@@ -10,7 +10,7 @@ from fdk_client.common.aiohttp_helper import AiohttpHelper
 
 from . import __version__
 from .constants import ONLINE_ACCESS_MODE, OFFLINE_ACCESS_MODE, FYND_CLUSTER
-from .exceptions import FdkInvalidExtensionJson
+from .exceptions import FdkInvalidConfig
 from .session.session import Session
 from .utilities.logger import get_logger, safe_stringify
 from .utilities.utility import is_valid_url, get_current_timestamp
@@ -42,17 +42,17 @@ class Extension:
 
         # API Key
         if not data.get("api_key"):
-            raise FdkInvalidExtensionJson("Invalid api_key")
+            raise FdkInvalidConfig("Invalid api_key")
         self.api_key = data["api_key"]
 
         # API Secret
         if not data.get("api_secret"):
-            raise FdkInvalidExtensionJson("Invalid api_secret")
+            raise FdkInvalidConfig("Invalid api_secret")
         self.api_secret = data["api_secret"]
 
         # Callbacks
         if (not data.get("callbacks") or (data.get("callbacks") and (not data["callbacks"].get("auth") or not data["callbacks"].get("uninstall")))):
-            raise FdkInvalidExtensionJson("Missing some of callbacks. Please add all `auth` and `uninstall` callbacks.")
+            raise FdkInvalidConfig("Missing some of callbacks. Please add all `auth` and `uninstall` callbacks.")
         self.callbacks = data["callbacks"]
 
         # Access Mode
@@ -61,7 +61,7 @@ class Extension:
         # Cluster
         if data.get("cluster"):
             if not is_valid_url(data["cluster"]):
-                raise FdkInvalidExtensionJson("Invalid cluster")
+                raise FdkInvalidConfig("Invalid cluster")
             self.cluster = data["cluster"]
 
         # Webhook Registry
@@ -72,7 +72,7 @@ class Extension:
 
         # base url
         if (data.get("base_url") and not is_valid_url(data.get("base_url"))):
-            raise FdkInvalidExtensionJson(f"Invalid base_url value. Invalid value: {data.get('base_url')}")
+            raise FdkInvalidConfig(f"Invalid base_url value. Invalid value: {data.get('base_url')}")
         elif (not data.get("base_url")):
             data["base_url"] = extension_data.get("base_url")
         self.base_url = data["base_url"]
@@ -97,7 +97,7 @@ class Extension:
     def verify_scopes(self, scopes: list, extension_data: dict) -> list:
         missing_scopes = [scope for scope in scopes if scope not in extension_data["scope"]]
         if (not scopes or len(scopes) <= 0 or len(missing_scopes)):
-            raise FdkInvalidExtensionJson(f"Invalid scopes in extension config. Invalid scopes: {', '.join(missing_scopes)}")
+            raise FdkInvalidConfig(f"Invalid scopes in extension config. Invalid scopes: {', '.join(missing_scopes)}")
         return scopes
 
     def get_auth_callback(self) -> str:
@@ -108,7 +108,7 @@ class Extension:
 
     def get_platform_config(self, company_id) -> PlatformConfig:
         if (not self.is_initialized()):
-            raise FdkInvalidExtensionJson("Extension not initialized due to invalid data")
+            raise FdkInvalidConfig("Extension not initialized due to invalid data")
 
         platform_config = PlatformConfig({
             "companyId": int(company_id),
@@ -122,7 +122,7 @@ class Extension:
 
     async def get_platform_client(self, company_id, session: Session) -> PlatformClient:
         if (not self.is_initialized()):
-            raise FdkInvalidExtensionJson("Extension not initialized due to invalid data")
+            raise FdkInvalidConfig("Extension not initialized due to invalid data")
 
         from .session.session_storage import SessionStorage
 
@@ -169,9 +169,9 @@ class Extension:
             if response["status_code"] == 200:
                 return response["json"]
             else:
-                raise FdkInvalidExtensionJson(f"{response['json']['message']}, Status: {response['status_code']}")
+                raise FdkInvalidConfig(f"{response['json']['message']}, Status: {response['status_code']}")
         except Exception as e:
-            raise FdkInvalidExtensionJson(f"Invalid api_key or api_secret. Reason: {str(e)}")
+            raise FdkInvalidConfig(f"Invalid api_key or api_secret. Reason: {str(e)}")
 
 
 class FdkExtensionClient:

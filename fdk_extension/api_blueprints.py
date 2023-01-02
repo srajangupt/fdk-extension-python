@@ -10,15 +10,8 @@ from .middleware.session_middleware import session_middleware
 
 class ClientBlueprintGroup(BlueprintGroup):
 
-    def __init__(
-            self, 
-            client_type: Optional[str] = None,
-            url_prefix: Optional[str] = None, 
-            version: Optional[Union[int, str, float]] = None, 
-            strict_slashes: Optional[bool] = None, 
-            version_prefix: str = "/v"
-        ):
-        super().__init__(url_prefix, version, strict_slashes, version_prefix)
+    def __init__(self, client_type: Optional[str] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.client_type = client_type
 
     def append(self, value: Union[Blueprint, BlueprintGroup], *args, **kwargs) -> None:

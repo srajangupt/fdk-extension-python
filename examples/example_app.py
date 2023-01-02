@@ -2,7 +2,7 @@ import os
 import sys
 
 import aioredis
-from sanic import Sanic
+from sanic import Sanic, Blueprint
 from sanic import response
 
 import logging
@@ -131,18 +131,23 @@ async def disable_sales_channel_webhook_handler(request, application_id):
 
 app.blueprint(fdk_extension_client.fdk_route)
 
-fdk_extension_client.platform_api_routes.add_route(test_route_handler, "/test/routes")
+platform_bp = Blueprint("platform blueprint")
+platform_bp.add_route(test_route_handler, "/test/routes")
 
-fdk_extension_client.application_proxy_routes.add_route(test_route_handler, "/1234")
+application_bp = Blueprint("application blueprint")
+application_bp.add_route(test_route_handler, "/1234")
 
 app.add_route(webhook_handler, "/webhook", methods=["POST"])
 
-fdk_extension_client.platform_api_routes.add_route(enable_sales_channel_webhook_handler,
+platform_bp.add_route(enable_sales_channel_webhook_handler,
                                                       "/webhook/application/<application_id>/subscribe",
                                                       methods=["POST"])
-fdk_extension_client.platform_api_routes.add_route(disable_sales_channel_webhook_handler,
+platform_bp.add_route(disable_sales_channel_webhook_handler,
                                                       "/webhook/application/<application_id>/unsubscribe",
                                                       methods=["POST"])
+
+fdk_extension_client.platform_api_routes.append(platform_bp)
+fdk_extension_client.application_proxy_routes.append(application_bp)
 
 app.blueprint(fdk_extension_client.platform_api_routes)
 app.blueprint(fdk_extension_client.application_proxy_routes)

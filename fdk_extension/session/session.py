@@ -43,8 +43,7 @@ class Session:
         self.access_token_validity = raw_token.get("access_token_validity")
 
     def to_json(self):
-        return json.dumps(self.__dict__, default=json_serial,
-                          sort_keys=True, indent=4)
+        return json.dumps(self.__dict__, default=json_serial)
 
     @staticmethod
     def generate_session_id(is_online, **config_options):

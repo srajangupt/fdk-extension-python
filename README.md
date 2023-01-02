@@ -11,7 +11,7 @@ import os
 import sys
 
 import aioredis
-from sanic import Sanic
+from sanic import Sanic, Blueprint
 from sanic import response
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -38,11 +38,16 @@ fdk_extension_client = setup_fdk({
 
 app.blueprint(fdk_extension_client.fdk_route)
 
-fdk_extension_client.platform_api_routes.add_route(test_route_handler, "/test/routes")
+platform_bp = Blueprint("platform blueprint")
+platform_bp.add_route(test_route_handler, "/test/routes")
 
-fdk_extension_client.application_proxy_routes.add_route(test_route_handler, "/1234")
+application_bp = Blueprint("application blueprint")
+application_bp.add_route(test_route_handler, "/1234")
 
 app.add_route(webhook_handler, "/webhook")
+
+fdk_extension_client.platform_api_routes.append(platform_bp)
+fdk_extension_client.application_proxy_routes.append(application_bp)
 
 app.blueprint(fdk_extension_client.platform_api_routes)
 app.blueprint(fdk_extension_client.application_proxy_routes)
@@ -151,4 +156,6 @@ After webhook config is passed to setupFdk whenever extension is launched to any
 
 > Any update to webhook config will not automatically update subscriber data on Fynd Platform for a company until extension is opened atleast once after the update. 
 
-Other way to update webhook config manually for a company is to call `sync_events` function of webhookRegistery.   
+Other way to update webhook config manually for a company is to call `sync_events` function of webhookRegistery.  
+
+---

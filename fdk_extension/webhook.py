@@ -42,7 +42,7 @@ class WebhookRegistry:
         if not config.get("event_map"):
             raise FdkInvalidWebhookConfig("Invalid or missing event_map")
 
-        config["subscribe_on_install"] = True if not config.get("subscribe_on_install") else config["subscribe_on_install"]
+        config["subscribe_on_install"] = config.get("subscribe_on_install", True)
         self._handler_map = {}
         self._config = config
         self._fdk_config = fdk_config

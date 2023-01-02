@@ -62,7 +62,7 @@ async def install_handler(request: Request):
         next_response.cookies[company_cookie_name] = session.session_id
         next_response.cookies[company_cookie_name]["secure"] = True
         next_response.cookies[company_cookie_name]["samesite"] = "None"
-        next_response.cookies[company_cookie_name]["httponly"] = False
+        next_response.cookies[company_cookie_name]["httponly"] = True
         next_response.cookies[company_cookie_name]["expires"] = session.expires
 
         await SessionStorage.save_session(session)
@@ -106,7 +106,8 @@ async def auth_handler(request: Request):
                 session = Session(session_id=session_id)
             elif session.extension_id != extension.api_key:
                 session = Session(session_id=session_id)
-
+            
+            platform_config = extension.get_platform_config(company_id)
             offline_token_response = await platform_config.oauthClient.getOfflineAccessToken(
                 extension.scopes, request.args.get("code")
                 )
@@ -135,7 +136,7 @@ async def auth_handler(request: Request):
         next_response.cookies[company_cookie_name] = request.conn_info.ctx.fdk_session.session_id
         next_response.cookies[company_cookie_name]["secure"] = True
         next_response.cookies[company_cookie_name]["samesite"] = "None"
-        next_response.cookies[company_cookie_name]["httponly"] = False
+        next_response.cookies[company_cookie_name]["httponly"] = True
         next_response.cookies[company_cookie_name]["expires"] = session_expires
 
         logger.debug(f"Redirecting after auth callback to url: {redirect_url}")

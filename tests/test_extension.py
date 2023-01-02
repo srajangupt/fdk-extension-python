@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from .conftest import *
 
 from fdk_extension.extension import Extension
-from fdk_extension.exceptions import FdkInvalidExtensionJson
+from fdk_extension.exceptions import FdkInvalidConfig
 from fdk_extension.session.session import Session
 from fdk_extension.session.session_storage import SessionStorage
 
@@ -66,7 +66,7 @@ async def test_initialize_api_key_missing() -> None:
         "access_mode": OFFLINE_ACCESS_MODE,
         "cluster": FYND_CLUSTER,
     }
-    with pytest.raises(FdkInvalidExtensionJson, match="Invalid api_key"):
+    with pytest.raises(FdkInvalidConfig, match="Invalid api_key"):
         await extension.initialize(data_to_pass)
 
 
@@ -83,7 +83,7 @@ async def test_initialize_api_secret_mission() -> None:
         "access_mode": OFFLINE_ACCESS_MODE,
         "cluster": FYND_CLUSTER,
     }
-    with pytest.raises(FdkInvalidExtensionJson, match="Invalid api_secret"):
+    with pytest.raises(FdkInvalidConfig, match="Invalid api_secret"):
         await extension.initialize(data_to_pass)
 
 
@@ -97,7 +97,7 @@ async def test_initialize_callbacks_missing() -> None:
         "access_mode": OFFLINE_ACCESS_MODE,
         "cluster": FYND_CLUSTER,
     }
-    with pytest.raises(FdkInvalidExtensionJson, match="Missing some of callbacks. Please add all `auth` and `uninstall` callbacks."):
+    with pytest.raises(FdkInvalidConfig, match="Missing some of callbacks. Please add all `auth` and `uninstall` callbacks."):
         await extension.initialize(data_to_pass)
 
 
@@ -115,7 +115,7 @@ async def test_initialize_invalid_cluster() -> None:
         "access_mode": OFFLINE_ACCESS_MODE,
         "cluster": "invalid_url",
     }
-    with pytest.raises(FdkInvalidExtensionJson, match="Invalid cluster"):
+    with pytest.raises(FdkInvalidConfig, match="Invalid cluster"):
         await extension.initialize(data_to_pass)
 
 
@@ -134,7 +134,7 @@ async def test_initialize_invalid_base_url(extension_data_fixture: dict, monkeyp
         "cluster": FYND_CLUSTER,
     }
     mock_get_extension_details = AsyncMock(return_value=extension_data_fixture["json"])
-    with pytest.raises(FdkInvalidExtensionJson, match="Invalid base_url value. Invalid value: \w"):
+    with pytest.raises(FdkInvalidConfig, match="Invalid base_url value. Invalid value: \w"):
         monkeypatch.setattr(Extension, "get_extension_details", mock_get_extension_details)
         await extension.initialize(data_to_pass)
 
@@ -175,7 +175,7 @@ def test_is_initialized(extension_fixture: Extension) -> None:
 
 def test_verify_scopes_negative(extension_fixture: Extension, extension_data_fixture: dict) -> None:
     extension_data_fixture["json"]["scope"] = ['company/profile', 'company/product']
-    with pytest.raises(FdkInvalidExtensionJson):
+    with pytest.raises(FdkInvalidConfig):
         extension_fixture.verify_scopes(extension_fixture.scopes, extension_data_fixture["json"])
 
 def test_verify_scopes(extension_fixture: Extension, extension_data_fixture: dict) -> None:
@@ -198,12 +198,12 @@ def test_get_platform_config(extension_fixture: Extension) -> None:
 
 def test_get_platform_config_negative(extension_fixture: Extension) -> None:
     extension_fixture._Extension__is_initialized = False
-    with pytest.raises(FdkInvalidExtensionJson):
+    with pytest.raises(FdkInvalidConfig):
         extension_fixture.get_platform_config(COMPANY_ID)
 
 async def test_get_platform_client_negative(extension_fixture: Extension, session_fixture: Session) -> None:
     extension_fixture._Extension__is_initialized = False
-    with pytest.raises(FdkInvalidExtensionJson):
+    with pytest.raises(FdkInvalidConfig):
         await extension_fixture.get_platform_client(COMPANY_ID, session_fixture)
 
 async def test_get_platform_client(extension_fixture: Extension, session_fixture: Session, monkeypatch: MonkeyPatch) -> None:
@@ -261,7 +261,7 @@ async def test_get_extension_details(extension_fixture: Extension, extension_dat
 
 async def test_get_extension_details_negative(extension_fixture: Extension, extension_data_fixture: dict, monkeypatch: MonkeyPatch) -> None:
 
-    with pytest.raises(FdkInvalidExtensionJson):
+    with pytest.raises(FdkInvalidConfig):
         extension_data_fixture["status_code"] = 400
         extension_data_fixture["json"]["message"] = "Error Message"
 
